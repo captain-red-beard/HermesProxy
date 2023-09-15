@@ -1020,6 +1020,11 @@ namespace HermesProxy.World.Server
             SendPacket(new Pong(ping.Serial));
         }
 
+        void HandleNull()
+        {
+            SendPacket(new NullPong());
+        }
+
         public void SendAccountDataTimes()
         {
             System.Diagnostics.Trace.Assert(_connectType == ConnectionType.Realm);

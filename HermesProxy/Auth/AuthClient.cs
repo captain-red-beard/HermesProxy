@@ -14,6 +14,7 @@ using Framework;
 using Framework.IO;
 using Framework.Logging;
 using Framework.Networking;
+using System.ComponentModel;
 
 namespace HermesProxy.Auth
 {
@@ -275,6 +276,29 @@ namespace HermesProxy.Auth
             buffer.WriteUInt8((byte)_username.Length);
             buffer.WriteBytes(Encoding.ASCII.GetBytes(_username));
             SendPacket(buffer);
+
+            
+            
+
+            //https://github.com/azerothcore/acore-client/blob/master/src/lib/auth/handler.js
+            // ByteBuffer buffer = new ByteBuffer();
+            // buffer.WriteUInt8(0x00);
+            // buffer.WriteUInt16((UInt16)(_username.Length + 30));
+            // buffer.WriteString("Wow ");
+            // buffer.WriteUInt8(3); // Major
+            // buffer.WriteUInt8(3); // Minor
+            // buffer.WriteUInt8(5); // Patch
+            // buffer.WriteUInt16(12340);
+            // buffer.WriteString("x86");
+            // buffer.WriteString("Win");
+            // buffer.WriteString("enUS");
+            // buffer.WriteUInt32(0x3C); // TimeZone
+            // buffer.WriteUInt8((byte)_username.Length);
+            // buffer.WriteBytes(Encoding.ASCII.GetBytes(_username));
+
+            // Log.Print(LogType.Server, $"Buffer {_username}");
+            SendPacket(buffer);
+
         }
 
         private void HandleLogonChallenge(ByteBuffer packet)

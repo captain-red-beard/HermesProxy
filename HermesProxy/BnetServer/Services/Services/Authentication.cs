@@ -26,8 +26,8 @@ namespace BNetServer.Services
 
             if (logonRequest.ApplicationVersion != HermesProxy.ModernVersion.BuildInt)
             {
-                ServiceLog(LogType.Error, $"Battlenet.LogonRequest: Attempted to log in with wrong game version (using {logonRequest.ApplicationVersion})!");
-                return BattlenetRpcErrorCode.BadVersion;
+                ServiceLog(LogType.Warn, "[CRB fork] Wrong game version, overridding.");
+                logonRequest.ApplicationVersion = HermesProxy.ModernVersion.BuildInt;
             }
 
             if (logonRequest.Platform != "Win" && logonRequest.Platform != "Wn64" && logonRequest.Platform != "Mc64")

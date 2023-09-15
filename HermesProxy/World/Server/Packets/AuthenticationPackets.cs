@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace HermesProxy.World.Server.Packets
 {
@@ -38,6 +39,17 @@ namespace HermesProxy.World.Server.Packets
 
         public uint Serial;
         public uint Latency;
+    }
+
+    class NullPong : ServerPacket
+    {
+        public NullPong() : base(Opcode.MSG_NULL_ACTION)
+        {
+        }
+        public override void Write()
+        {
+            _worldPacket.WriteUInt32(0);
+        }
     }
 
     class Pong : ServerPacket

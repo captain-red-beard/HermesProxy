@@ -26,6 +26,8 @@ namespace BNetServer.Services
                 return "c1";
             if (ModernVersion.ExpansionVersion == 2)
                 return "bcc1";
+            if (ModernVersion.ExpansionVersion == 3)
+                return "wotlk1";
             return "b9";
         }
 
@@ -58,6 +60,18 @@ namespace BNetServer.Services
                 return GetRealmList(Params, response);
             if (command.Name == $"Command_RealmJoinRequest_v1_{GetCommandEndingForVersion()}")
                 return JoinRealm(Params, response);
+
+
+            if (command.Name == $"Command_RealmListTicketRequest_v1_wotlk1")
+                return GetRealmListTicket(Params, response);
+            if (command.Name == $"Command_LastCharPlayedRequest_v1_wotlk1")
+                return GetLastCharPlayed(Params, response);
+            if (command.Name == $"Command_RealmListRequest_v1_wotlk1")
+                return GetRealmList(Params, response);
+            if (command.Name == $"Command_RealmJoinRequest_v1_wotlk1")
+                return JoinRealm(Params, response);
+
+
 
             ServiceLog(LogType.Warn, $"Sent unhandled command '{command.Name}'.");
             return BattlenetRpcErrorCode.RpcNotImplemented;

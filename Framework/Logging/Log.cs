@@ -44,7 +44,7 @@ namespace Framework.Logging
         private static Thread? _logOutputThread = null;
         public static bool IsLogging => _logOutputThread != null && !logQueue.IsCompleted;
 
-        public static bool DebugLogEnabled { get; set; }
+        public static bool DebugLogEnabled = true;
         
         /// <summary>
         /// Start the logging Thread and take logs out of the <see cref="BlockingCollection{T}"/>
@@ -68,8 +68,7 @@ namespace Framework.Logging
 
         private static void PrintInternalDirectly(LogType type, string text)
         {
-            if (type == LogType.Debug && !DebugLogEnabled)
-                return;
+
 #if DEBUG
             Console.Write($"{DateTime.Now:HH:mm:ss.ff} | "); // This function is directly called in DEBUG, so our timesstamps can also be a more precise
 #else

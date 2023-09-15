@@ -27,7 +27,7 @@ namespace HermesProxy
                 case ClientVersionBuild.V2_4_3_8606:
                     return true;
                 case ClientVersionBuild.V3_3_5a_12340:
-                    return false;
+                    return true;
             }
 
             return false;
@@ -37,6 +37,8 @@ namespace HermesProxy
         {
             switch (modernVersion)
             {
+                case ClientVersionBuild.V3_4_2_50664:
+                    return true;
                 case ClientVersionBuild.V2_5_2_39570:
                 case ClientVersionBuild.V2_5_2_39618:
                 case ClientVersionBuild.V2_5_2_39926:
@@ -101,6 +103,7 @@ namespace HermesProxy
             {
                 1 => ClientVersionBuild.V1_12_1_5875,
                 2 => ClientVersionBuild.V2_4_3_8606,
+                3 => ClientVersionBuild.V3_3_5a_12340,
                 _ => ClientVersionBuild.Zero,
             };
         }
@@ -120,8 +123,14 @@ namespace HermesProxy
         public int Size;
         public UpdateFieldType Format;
     }
+    
+
     public static class LegacyVersion
     {
+
+        /*
+            Server Emulator Version
+        */
         static LegacyVersion()
         {
             Build = Settings.ServerBuild;
@@ -364,7 +373,8 @@ namespace HermesProxy
             str = str.Substring(str.IndexOf('_') + 1);
             str = str.Substring(str.IndexOf('_') + 1);
             str = str.Substring(0, str.IndexOf("_"));
-            return (byte)UInt32.Parse(str);
+    
+            return (byte)Convert.ToInt32("0x" + str, 16);
         }
 
         public static bool InVersion(ClientVersionBuild build1, ClientVersionBuild build2)
@@ -581,6 +591,9 @@ namespace HermesProxy
                 case ClientVersionBuild.V2_5_3_42328:
                 case ClientVersionBuild.V2_5_3_42598:
                     return ClientVersionBuild.V2_5_3_41750;
+                case ClientVersionBuild.V3_4_0_45166:
+                case ClientVersionBuild.V3_4_2_50664:
+                    return ClientVersionBuild.V3_4_0_45166;
             }
             return ClientVersionBuild.Zero;
         }
@@ -701,6 +714,8 @@ namespace HermesProxy
         {
             switch (Opcodes.GetOpcodesDefiningBuild(Build))
             {
+                case ClientVersionBuild.V3_4_0_45166:
+                    return typeof(World.Enums.V3_4_0_45166.ResponseCodes);
                 case ClientVersionBuild.V2_5_2_39570:
                     return typeof(World.Enums.V2_5_2_39570.ResponseCodes);
                 case ClientVersionBuild.V2_5_3_41750:

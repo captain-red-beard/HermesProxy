@@ -524,6 +524,10 @@ namespace HermesProxy.Enums
         V2_5_3_42328 = 42328, // both live and ptr
         V2_5_3_42598 = 42598, // live
 
+
+        V3_4_0_45166 = 45166,
+        V3_4_2_50664 = 50664,
+
         // Battle.net - should probably not mix this but oh well
         BattleNetV37165 = 37165,
 

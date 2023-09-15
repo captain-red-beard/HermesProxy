@@ -21,6 +21,9 @@ namespace HermesProxy.World.Enums
                     return ClientVersionBuild.V2_4_3_8606;
                 case ClientVersionBuild.V3_3_5a_12340:
                     return ClientVersionBuild.V3_3_5a_12340;
+                case ClientVersionBuild.V3_4_0_45166:
+                case ClientVersionBuild.V3_4_2_50664:
+                    return ClientVersionBuild.V3_4_0_45166;
                 case ClientVersionBuild.V2_5_2_39570:
                 case ClientVersionBuild.V2_5_2_39618:
                 case ClientVersionBuild.V2_5_2_39926:
@@ -94,6 +97,8 @@ namespace HermesProxy.World.Enums
                     return typeof(V2_5_3_41750.Opcode);
                 case ClientVersionBuild.V1_14_1_40688:
                     return typeof(V1_14_1_40688.Opcode);
+                case ClientVersionBuild.V3_4_0_45166:
+                    return typeof(V3_4_0_45166.Opcode);
             }
             return null;
         }

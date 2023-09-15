@@ -32,6 +32,8 @@ namespace HermesProxy.World.Client
             SendPacketToClient(updateObject);
         }
 
+        
+
         [PacketHandler(Opcode.SMSG_COMPRESSED_UPDATE_OBJECT)]
         void HandleCompressedUpdateObject(WorldPacket packet)
         {

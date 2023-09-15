@@ -111,6 +111,8 @@ namespace HermesProxy
             Console.WriteLine($"(bnetSocketServer.IsListening: {bnetSocketServer.IsListening}");
             Console.WriteLine($"(realmSocketServer.IsListening: {realmSocketServer.IsListening}");
             Console.WriteLine($"(worldSocketServer.IsListening: {worldSocketServer.IsListening}");
+
+            Log.DebugLogEnabled = true;
         }
 
         private static SocketManager<TSocketType> StartServer<TSocketType>(IPEndPoint bindIp) where TSocketType : ISocket
@@ -128,47 +130,6 @@ namespace HermesProxy
             return socketManager;
         }
 
-        private static async Task CheckForUpdate()
-        {
-            const string hermesGitHubRepo = "WowLegacyCore/HermesProxy";
-
-            try
-            {
-                if (GitVersionInformation.CommitsSinceVersionSource != "0" || GitVersionInformation.UncommittedChanges != "0")
-                    return; // we are probably in a test branch
-
-                using var client = new HttpClient();
-                client.Timeout = TimeSpan.FromSeconds(5);
-                client.DefaultRequestHeaders.Add("User-Agent", "curl/7.0.0"); // otherwise we get blocked
-                var response = await client.GetAsync($"https://api.github.com/repos/{hermesGitHubRepo}/releases/latest");
-                response.EnsureSuccessStatusCode();
-
-                string rawJson = await response.Content.ReadAsStringAsync();
-                var parsedJson = JsonSerializer.Deserialize<Dictionary<string, object>>(rawJson);
-
-                string commitDateStr = parsedJson!["created_at"].ToString();
-                DateTime commitDate = DateTime.Parse(commitDateStr!, CultureInfo.InvariantCulture).ToUniversalTime();;
-
-                string myCommitDateStr = GitVersionInformation.CommitDate;
-                DateTime myCommitDate = DateTime.Parse(myCommitDateStr, CultureInfo.InvariantCulture).ToUniversalTime();;
-
-                if (commitDate > myCommitDate)
-                {
-                    Console.WriteLine("------------------------");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"HermesProxy update available v{GitVersionInformation.Major}.{GitVersionInformation.Minor} => {parsedJson!["tag_name"]} ({commitDate:yyyy-MM-dd})");
-                    Console.WriteLine("Please download new version from https://github.com/WowLegacyCore/HermesProxy/releases/latest");
-                    Console.ResetColor();
-                    Console.WriteLine("------------------------");
-                    Console.WriteLine();
-                    Thread.Sleep(10_000);
-                }
-            }
-            catch
-            {
-                // ignore
-            }
-        }
 
         private static readonly string? _buildTag;
         private static string GetVersionInformation()
