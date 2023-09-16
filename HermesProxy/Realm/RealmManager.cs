@@ -282,14 +282,14 @@ public class RealmManager
 
             byte[] compressed = Json.Deflate("JSONRealmListServerIPAddresses", serverAddresses);
 
-            byte[] serverSecret = new byte[0].GenerateRandomKey(32);
-            byte[] keyData = clientSecret.ToArray().Combine(serverSecret);
 
-            globalSession.SessionKey = keyData;
+            globalSession.ServerSecret = new byte[0].GenerateRandomKey(32);
+            globalSession.SessionKey = clientSecret.ToArray().Combine(globalSession.ServerSecret);
+
 
             response.Attribute.AddBlob("Param_RealmJoinTicket", ByteString.CopyFrom(accountName, Encoding.UTF8));
             response.Attribute.AddBlob("Param_ServerAddresses", ByteString.CopyFrom(compressed));
-            response.Attribute.AddBlob("Param_JoinSecret", ByteString.CopyFrom(serverSecret));
+            response.Attribute.AddBlob("Param_JoinSecret", ByteString.CopyFrom(globalSession.ServerSecret));
 
             return BattlenetRpcErrorCode.Ok;
         }

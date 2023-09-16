@@ -781,6 +781,7 @@ namespace HermesProxy
         public string Username;
         public string LoginTicket;
         public byte[] SessionKey;
+        public byte[] ServerSecret;
         public string Locale;
         public string OS;
         public uint Build;

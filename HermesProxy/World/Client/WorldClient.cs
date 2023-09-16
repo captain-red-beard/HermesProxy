@@ -59,9 +59,9 @@ namespace HermesProxy.World.Client
             Log.Print(LogType.Network, "Connecting to world server...");
             try
             {
-                IPAddress ip = IPAddress.Parse("127.0.0.1");
-                var port = 3724;
-                //Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}");
+                var ip = NetworkUtils.ResolveOrDirectIPv4(realm.ExternalAddress);
+                var port = realm.Port;
+                Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{port}");
                 _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 // Connect to the specified host.
                 var endPoint = new IPEndPoint(ip, port);
@@ -105,7 +105,7 @@ namespace HermesProxy.World.Client
 
             if (_worldCrypt == null)
                 throw new Exception("WorldCrypt is null");
-            _worldCrypt.Initialize(sessionKey);
+
         }
 
         public void Disconnect()

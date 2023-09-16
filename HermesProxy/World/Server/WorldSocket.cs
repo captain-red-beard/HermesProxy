@@ -58,7 +58,7 @@ namespace HermesProxy.World.Server
         ulong _key;
 
         byte[] _serverChallenge;
-        WorldCrypt _worldCrypt;
+        WorldAithCrypt _worldAuthCrypt;
         byte[] _sessionKey;
         byte[] _encryptKey;
         ConnectToKey _instanceConnectKey;
@@ -75,7 +75,7 @@ namespace HermesProxy.World.Server
         {
             _connectType = ConnectionType.Realm;
             _serverChallenge = Array.Empty<byte>().GenerateRandomKey(16);
-            _worldCrypt = new WorldCrypt();
+            _worldAuthCrypt = new WorldAithCrypt();
 
             _encryptKey = new byte[16];
 
@@ -241,7 +241,7 @@ namespace HermesProxy.World.Server
             PacketHeader header = new();
             header.Read(_headerBuffer.GetData());
 
-            if (!_worldCrypt.Decrypt(_packetBuffer.GetData(), header.Tag))
+            if (!_worldAuthCrypt.Decrypt(_packetBuffer.GetData(), header.Tag))
             {
                 Log.Print(LogType.Error, $"WorldSocket.ReadData(): client {GetRemoteIpAddress()} failed to decrypt packet (size: {header.Size})");
                 return ReadDataHandlerResult.Error;
@@ -375,7 +375,7 @@ namespace HermesProxy.World.Server
             ByteBuffer buffer = new();
 
             int packetSize = data.Length;
-            if (packetSize > 0x400 && _worldCrypt.IsInitialized)
+            if (packetSize > 0x400 && _worldAuthCrypt.IsInitialized)
             {
                 buffer.WriteInt32(packetSize + 2);
                 buffer.WriteUInt32(ZLib.adler32(ZLib.adler32(0x9827D8F1, BitConverter.GetBytes(opcode), 2), data, (uint)packetSize));
@@ -401,7 +401,7 @@ namespace HermesProxy.World.Server
 
             PacketHeader header = new();
             header.Size = packetSize;
-            _worldCrypt.Encrypt(ref data, ref header.Tag);
+            _worldAuthCrypt.Encrypt(ref data, ref header.Tag);
 
             ByteBuffer byteBuffer = new();
             header.Write(byteBuffer);
@@ -453,8 +453,9 @@ namespace HermesProxy.World.Server
         {
             AuthChallenge challenge = new();
             challenge.Challenge = _serverChallenge;
-            challenge.DosChallenge = new byte[32].GenerateRandomKey(32);
-            challenge.DosZeroBits = 1;
+            challenge.DosChallenge = new byte[32].GenerateRandomKey(32); // uint32 * 8 array
+            challenge.DosZeroBits = 1; // What?
+            //TODO: What?
 
             SendPacket(challenge);
         }
@@ -479,11 +480,13 @@ namespace HermesProxy.World.Server
             }
             
             Sha256 digestKeyHash = new();
+            // Client secret + Server secret concatted by BNet service
             digestKeyHash.Process(GetSession().SessionKey, GetSession().SessionKey.Length);
-            digestKeyHash.Finish(buildInfo.Win64AuthSeed);
+            // TrinityCore src\server\game\Server\WorldSocket.cpp
+            digestKeyHash.Finish("179D3DC3235629D07113A9B3867F97A7".ParseAsByteArray());
 
             HmacSha256 hmac = new(digestKeyHash.Digest);
-            hmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
+            hmac.Process(authSession.ModernClientChallenge, authSession.ModernClientChallenge.Count);
             hmac.Process(_serverChallenge, 16);
             hmac.Finish(AuthCheckSeed, 16);
 
@@ -501,7 +504,7 @@ namespace HermesProxy.World.Server
 
             HmacSha256 sessionKeyHmac = new(keyData.Digest);
             sessionKeyHmac.Process(_serverChallenge, 16);
-            sessionKeyHmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
+            sessionKeyHmac.Process(authSession.ModernClientChallenge, authSession.ModernClientChallenge.Count);
             sessionKeyHmac.Finish(SessionKeySeed, 16);
 
             _sessionKey = new byte[40];
@@ -509,7 +512,7 @@ namespace HermesProxy.World.Server
             sessionKeyGenerator.Generate(_sessionKey, 40);
 
             HmacSha256 encryptKeyGen = new(_sessionKey);
-            encryptKeyGen.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
+            encryptKeyGen.Process(authSession.ModernClientChallenge, authSession.ModernClientChallenge.Count);
             encryptKeyGen.Process(_serverChallenge, 16);
             encryptKeyGen.Finish(EncryptionKeySeed, 16);
 
@@ -686,7 +689,7 @@ namespace HermesProxy.World.Server
 
         void HandleEnterEncryptedModeAck()
         {
-            _worldCrypt.Initialize(_encryptKey);
+            _worldAuthCrypt.Initialize(_encryptKey);
             if (_connectType == ConnectionType.Realm)
             {
                 SendAuthResponse(BattlenetRpcErrorCode.Ok, GetSession().WorldClient.GetQueuePosition());

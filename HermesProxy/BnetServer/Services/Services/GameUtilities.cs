@@ -116,7 +116,7 @@ namespace BNetServer.Services
                 var realmListTicketClientInformation = Json.CreateObject<RealmListTicketClientInformation>(clientInfo.BlobValue.ToStringUtf8(), true);
                 clientInfoOk = true;
 
-                Log.Print(LogType.Warn, _clientSecret);
+                Log.Print(LogType.Warn, "Client Secret: " + _clientSecret.ToArray().ToString());
                 for (var i = 0; i < Math.Min(_clientSecret.Length, realmListTicketClientInformation.Info.Secret.Count); i++)
                     _clientSecret[i] = (byte)realmListTicketClientInformation.Info.Secret[i];
             }

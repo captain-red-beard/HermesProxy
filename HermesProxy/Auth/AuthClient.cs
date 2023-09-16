@@ -314,10 +314,10 @@ namespace HermesProxy.Auth
             versionChallenge = challenge_version.ToBigInteger();
 
             //Console.WriteLine("---====== Received from server: ======---");
-            //Console.WriteLine($"B={B.ToCleanByteArray().ToHexString()}");
-            //Console.WriteLine($"N={N.ToCleanByteArray().ToHexString()}");
-            //Console.WriteLine($"salt={challenge_salt.ToHexString()}");
-            //Console.WriteLine($"versionChallenge={challenge_version.ToHexString()}");
+            Console.WriteLine($"B={B.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"N={N.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"salt={challenge_salt.ToHexString()}");
+            Console.WriteLine($"versionChallenge={challenge_version.ToHexString()}");
             #endregion
 
             #region Hash password
@@ -325,9 +325,9 @@ namespace HermesProxy.Auth
             x = HashAlgorithm.SHA1.Hash(challenge_salt, _passwordHash).ToBigInteger();
 
             //Console.WriteLine("---====== shared password hash ======---");
-            //Console.WriteLine($"g={g.ToCleanByteArray().ToHexString()}");
-            //Console.WriteLine($"x={x.ToCleanByteArray().ToHexString()}");
-            //Console.WriteLine($"N={N.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"g={g.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"x={x.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"N={N.ToCleanByteArray().ToHexString()}");
 
             #endregion
 
@@ -345,7 +345,7 @@ namespace HermesProxy.Auth
             } while (A.ModPow(1, N) == 0);
 
             //Console.WriteLine("---====== Send data to server: ======---");
-            //Console.WriteLine($"A={A.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"A={A.ToCleanByteArray().ToHexString()}");
 
             #endregion
 
@@ -397,12 +397,12 @@ namespace HermesProxy.Auth
             byte[] nHash = HashAlgorithm.SHA1.Hash(N.ToCleanByteArray());
             for (int i = 0; i < 20; ++i)
                 gNHash[i] = nHash[i];
-            //Console.WriteLine($"nHash={nHash.ToHexString()}");
+            Console.WriteLine($"nHash={nHash.ToHexString()}");
 
             byte[] gHash = HashAlgorithm.SHA1.Hash(g.ToCleanByteArray());
             for (int i = 0; i < 20; ++i)
                 gNHash[i] ^= gHash[i];
-            //Console.WriteLine($"gHash={gHash.ToHexString()}");
+            Console.WriteLine($"gHash={gHash.ToHexString()}");
 
             // hash username
             byte[] userHash = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(_username.ToUpper()));
@@ -419,15 +419,15 @@ namespace HermesProxy.Auth
             );
 
             //Console.WriteLine("---====== Client proof: ======---");
-            //Console.WriteLine($"gNHash={gNHash.ToHexString()}");
-            //Console.WriteLine($"userHash={userHash.ToHexString()}");
-            //Console.WriteLine($"salt={challenge_salt.ToHexString()}");
-            //Console.WriteLine($"A={A.ToCleanByteArray().ToHexString()}");
-            //Console.WriteLine($"B={B.ToCleanByteArray().ToHexString()}");
-            //Console.WriteLine($"key={_key.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"gNHash={gNHash.ToHexString()}");
+            Console.WriteLine($"userHash={userHash.ToHexString()}");
+            Console.WriteLine($"salt={challenge_salt.ToHexString()}");
+            Console.WriteLine($"A={A.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"B={B.ToCleanByteArray().ToHexString()}");
+            Console.WriteLine($"key={_key.ToCleanByteArray().ToHexString()}");
 
             //Console.WriteLine("---====== Send proof to server: ======---");
-            //Console.WriteLine($"M={m1Hash.ToHexString()}");
+            Console.WriteLine($"M={m1Hash.ToHexString()}");
 
             // expected proof for server
             _m2 = HashAlgorithm.SHA1.Hash(A.ToCleanByteArray(), m1Hash, keyData);

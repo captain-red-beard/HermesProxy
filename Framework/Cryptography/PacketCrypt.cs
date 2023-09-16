@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 
 namespace Framework.Cryptography
 {
-    public sealed class WorldCrypt : IDisposable
+    public sealed class WorldAithCrypt : IDisposable
     {
         public void Initialize(byte[] key)
         {

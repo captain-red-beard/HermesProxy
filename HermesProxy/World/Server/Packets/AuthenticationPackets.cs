@@ -97,8 +97,8 @@ namespace HermesProxy.World.Server.Packets
             BattlegroupID = _worldPacket.ReadUInt32();
             RealmID = _worldPacket.ReadUInt32();
 
-            for (var i = 0; i < LocalChallenge.GetLimit(); ++i)
-                LocalChallenge[i] = _worldPacket.ReadUInt8();
+            for (var i = 0; i < ModernClientChallenge.GetLimit(); ++i)
+                ModernClientChallenge[i] = _worldPacket.ReadUInt8();
 
             Digest = _worldPacket.ReadBytes(24);
 
@@ -183,7 +183,8 @@ namespace HermesProxy.World.Server.Packets
         public uint RegionID;
         public uint BattlegroupID;
         public uint RealmID;
-        public Array<byte> LocalChallenge = new(16);
+        // I believe is based on TrinityCore's LocalChallenge https://github.com/TrinityCore/TrinityCore/blob/master/src/server/game/Server/WorldSocket.cpp
+        public Array<byte> ModernClientChallenge = new(16);
         public byte[] Digest = new byte[24];
         public ulong DosResponse;
         public string RealmJoinTicket;
