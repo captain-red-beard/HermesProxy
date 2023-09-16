@@ -256,47 +256,26 @@ namespace HermesProxy.Auth
 
         private void SendLogonChallenge(bool reconnect)
         {
+
+            // https://wowdev.wiki/CMD_AUTH_LOGON_CHALLENGE_Client#Protocol_Versions
             ByteBuffer buffer = new ByteBuffer();
-            buffer.WriteUInt8((byte)(reconnect ? AuthCommand.RECONNECT_CHALLENGE : AuthCommand.LOGON_CHALLENGE));
-            buffer.WriteUInt8((byte)(LegacyVersion.ExpansionVersion > 1 ? 8 : 3));
+            buffer.WriteUInt8(0x00);
+            buffer.WriteUInt8(0x08);
             buffer.WriteUInt16((UInt16)(_username.Length + 30));
-            buffer.WriteBytes(Encoding.ASCII.GetBytes("WoW"));
-            buffer.WriteUInt8(0);
-            buffer.WriteUInt8(LegacyVersion.ExpansionVersion);
-            buffer.WriteUInt8(LegacyVersion.MajorVersion);
-            buffer.WriteUInt8(LegacyVersion.MinorVersion);
-            buffer.WriteUInt16((ushort)Settings.ServerBuild);
-            buffer.WriteBytes(Encoding.ASCII.GetBytes(Settings.ReportedPlatform.Reverse()));
-            buffer.WriteUInt8(0);
-            buffer.WriteBytes(Encoding.ASCII.GetBytes(Settings.ReportedOS.Reverse()));
-            buffer.WriteUInt8(0);
-            buffer.WriteBytes(Encoding.ASCII.GetBytes(_locale.Reverse()));
-            buffer.WriteUInt32(0x3C); // timezone_bias
-            buffer.WriteUInt32(0x01_00_00_7F); // IP (127.0.0.1)
+            buffer.WriteBytes(Encoding.ASCII.GetBytes("WOW\0"));
+            buffer.WriteUInt8(3); // Major
+            buffer.WriteUInt8(3); // Minor
+            buffer.WriteUInt8(5); // Patch
+            buffer.WriteUInt16((ushort)12340);
+            buffer.WriteBytes(Encoding.ASCII.GetBytes("68x\0"));
+            buffer.WriteBytes(Encoding.ASCII.GetBytes("niW\0"));
+            buffer.WriteBytes(Encoding.ASCII.GetBytes("USne"));
+            buffer.WriteUInt32(0x3C); // TimeZone
+            buffer.WriteUInt32(0x01_00_00_7F);
             buffer.WriteUInt8((byte)_username.Length);
             buffer.WriteBytes(Encoding.ASCII.GetBytes(_username));
-            SendPacket(buffer);
 
-            
-            
-
-            //https://github.com/azerothcore/acore-client/blob/master/src/lib/auth/handler.js
-            // ByteBuffer buffer = new ByteBuffer();
-            // buffer.WriteUInt8(0x00);
-            // buffer.WriteUInt16((UInt16)(_username.Length + 30));
-            // buffer.WriteString("Wow ");
-            // buffer.WriteUInt8(3); // Major
-            // buffer.WriteUInt8(3); // Minor
-            // buffer.WriteUInt8(5); // Patch
-            // buffer.WriteUInt16(12340);
-            // buffer.WriteString("x86");
-            // buffer.WriteString("Win");
-            // buffer.WriteString("enUS");
-            // buffer.WriteUInt32(0x3C); // TimeZone
-            // buffer.WriteUInt8((byte)_username.Length);
-            // buffer.WriteBytes(Encoding.ASCII.GetBytes(_username));
-
-            // Log.Print(LogType.Server, $"Buffer {_username}");
+            Log.Print(LogType.Server, $"Buffer {_username}");
             SendPacket(buffer);
 
         }

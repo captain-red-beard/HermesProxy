@@ -59,11 +59,12 @@ namespace HermesProxy.World.Client
             Log.Print(LogType.Network, "Connecting to world server...");
             try
             {
-                var ip = NetworkUtils.ResolveOrDirectIPv4(realm.ExternalAddress);
-                Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}");
+                IPAddress ip = IPAddress.Parse("127.0.0.1");
+                var port = 3724;
+                //Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}");
                 _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 // Connect to the specified host.
-                var endPoint = new IPEndPoint(ip, realm.Port);
+                var endPoint = new IPEndPoint(ip, port);
                 _clientSocket.BeginConnect(endPoint, ConnectCallback, null);
             }
             catch (Exception ex)
@@ -73,7 +74,9 @@ namespace HermesProxy.World.Client
             }
 
             while (_isSuccessful == null)
-            { }
+            {
+
+            }
 
             return (bool)_isSuccessful;
         }
@@ -95,10 +98,14 @@ namespace HermesProxy.World.Client
                 case ClientVersionBuild.V2_4_3_8606:
                     _worldCrypt = new TbcWorldCrypt();
                     break;
+                case ClientVersionBuild.V3_3_5a_12340:
+                    _worldCrypt = new WotLKWorldCrypt();
+                    break;
             }
 
-            if (_worldCrypt != null)
-                _worldCrypt.Initialize(sessionKey);
+            if (_worldCrypt == null)
+                throw new Exception("WorldCrypt is null");
+            _worldCrypt.Initialize(sessionKey);
         }
 
         public void Disconnect()
@@ -129,6 +136,7 @@ namespace HermesProxy.World.Client
             {
                 Log.Print(LogType.Network, "Connection established!");
 
+                _isSuccessful = true;
                 _clientSocket.EndConnect(AR);
                 _clientSocket.ReceiveBufferSize = 65535;
 
@@ -159,6 +167,7 @@ namespace HermesProxy.World.Client
 
         private async Task ReceiveLoop()
         {
+            Log.Print(LogType.Warn, "Receive loop started");
             try
             {
                 while (true)

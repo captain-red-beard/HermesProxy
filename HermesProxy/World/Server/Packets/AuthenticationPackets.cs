@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
 using System.Reflection.Emit;
+using Framework.Logging;
+using System.Text;
 
 namespace HermesProxy.World.Server.Packets
 {
@@ -89,6 +91,7 @@ namespace HermesProxy.World.Server.Packets
 
         public override void Read()
         {
+
             DosResponse = _worldPacket.ReadUInt64();
             RegionID = _worldPacket.ReadUInt32();
             BattlegroupID = _worldPacket.ReadUInt32();
@@ -103,6 +106,78 @@ namespace HermesProxy.World.Server.Packets
             uint realmJoinTicketSize = _worldPacket.ReadUInt32();
             if (realmJoinTicketSize != 0)
                 RealmJoinTicket = _worldPacket.ReadString(realmJoinTicketSize);
+
+            // Do not overwrite version after Handler was initialized
+
+
+            // var build = _worldPacket.ReadInt32();
+
+            // var z = _worldPacket.ReadInt32();
+            // var account = _worldPacket.ReadCString();
+
+            // var wouldBeRealm = _worldPacket.ReadInt32();
+
+            // var seed = _worldPacket.ReadInt32();
+
+        
+            // // Some numbers about selected realm
+            // var a = _worldPacket.ReadInt32();
+            // var b = _worldPacket.ReadInt32();
+            // var c = _worldPacket.ReadInt32();
+
+            // var d =_worldPacket.ReadInt64();
+
+            // while(_worldPacket.CanRead()) {
+            //     Log.Print(LogType.Warn, "EXTRA: " + _worldPacket.ReadBytes(1));
+            // }
+
+            // Digest = _worldPacket.ReadBytes(20);
+
+
+            // var sha = new byte[20];
+            // var b = _worldPacket.ReadUInt32();//18
+            // sha[2] = _worldPacket.ReadBytes(1)[0];//24
+            // sha[15] = _worldPacket.ReadBytes(1)[0];//37
+            // sha[12] = _worldPacket.ReadBytes(1)[0];//34
+            // sha[11] = _worldPacket.ReadBytes(1)[0];//33
+            // sha[10] = _worldPacket.ReadBytes(1)[0];//32
+            // sha[9] = _worldPacket.ReadBytes(1)[0];//31
+            // var a = _worldPacket.ReadBytes(1)[0];//20
+            // var seed = _worldPacket.ReadUInt32();//14
+            // sha[16] = _worldPacket.ReadBytes(1)[0];//38
+            // sha[5] = _worldPacket.ReadBytes(1)[0];//27
+            // var build = _worldPacket.ReadInt16();//34
+            // var c = _worldPacket.ReadUInt32();//16
+            // sha[18] = _worldPacket.ReadBytes(1)[0];//40
+            // sha[0] = _worldPacket.ReadBytes(1)[0];//22
+            // sha[13] = _worldPacket.ReadBytes(1)[0];//35
+            // sha[3] = _worldPacket.ReadBytes(1)[0];//25
+            // sha[14] = _worldPacket.ReadBytes(1)[0];//36
+            // var d = _worldPacket.ReadBytes(1)[0];//21
+            // sha[8] = _worldPacket.ReadBytes(1)[0];//30
+            // sha[7] = _worldPacket.ReadBytes(1)[0];//29
+            // var e = _worldPacket.ReadUInt32();//15
+            // sha[4] = _worldPacket.ReadBytes(1)[0];//26
+            // var f = _worldPacket.ReadInt64();//12,13
+            // sha[17] = _worldPacket.ReadBytes(1)[0];//39
+            // sha[19] = _worldPacket.ReadBytes(1)[0];//41
+            // var g = _worldPacket.ReadUInt32();//4
+            // sha[6] = _worldPacket.ReadBytes(1)[0];//28
+            // sha[1] = _worldPacket.ReadBytes(1)[0];//23
+
+            // int length = _worldPacket.ReadInt32();
+            // var addonsPacket = _worldPacket.ReadBytes((uint)length);
+            
+            // // AddonHandler.ReadClientAddonsList(addons);
+            // // addons.ClosePacket(false);
+
+            // _worldPacket.ReadBit();
+
+
+            // var size = BitConverter.ToUInt32(_worldPacket.ReadBytes(3), 0);
+
+            // Log.Print(LogType.Warn, "Account name " + Encoding.UTF8.GetString(_worldPacket.ReadBytes(size)));
+            // Digest = sha;
         }
 
         public uint RegionID;

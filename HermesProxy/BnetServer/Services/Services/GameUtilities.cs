@@ -116,6 +116,7 @@ namespace BNetServer.Services
                 var realmListTicketClientInformation = Json.CreateObject<RealmListTicketClientInformation>(clientInfo.BlobValue.ToStringUtf8(), true);
                 clientInfoOk = true;
 
+                Log.Print(LogType.Warn, _clientSecret);
                 for (var i = 0; i < Math.Min(_clientSecret.Length, realmListTicketClientInformation.Info.Secret.Count); i++)
                     _clientSecret[i] = (byte)realmListTicketClientInformation.Info.Secret[i];
             }
@@ -196,6 +197,8 @@ namespace BNetServer.Services
             Variant realmAddress = Params.LookupByKey("Param_RealmAddress");
             if (realmAddress == null)
                 return BattlenetRpcErrorCode.WowServicesInvalidJoinTicket;
+
+            Log.Print(LogType.Debug, "Realm Address: " + (uint)realmAddress.UintValue);
 
             return GetSession().RealmManager.JoinRealm(GetSession(), (uint)realmAddress.UintValue, GetSession().Build, GetRemoteIpEndPoint().Address, _clientSecret, GetSession().GameAccountInfo.Name, response);
         }

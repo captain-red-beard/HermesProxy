@@ -337,7 +337,9 @@ namespace HermesProxy
                 case ClientVersionBuild.V1_12_1_5875:
                     return typeof(World.Enums.V1_12_1_5875.ResponseCodes);
                 case ClientVersionBuild.V2_4_3_8606:
+                    return typeof(World.Enums.V2_4_3_8606.ResponseCodes);
                 case ClientVersionBuild.V3_3_5a_12340:
+                    //TODO: WRATH RESPONSE CODES
                     return typeof(World.Enums.V2_4_3_8606.ResponseCodes);
             }
             return null;
@@ -373,8 +375,12 @@ namespace HermesProxy
             str = str.Substring(str.IndexOf('_') + 1);
             str = str.Substring(str.IndexOf('_') + 1);
             str = str.Substring(0, str.IndexOf("_"));
-    
-            return (byte)Convert.ToInt32("0x" + str, 16);
+            
+            if(str.Contains("a")) {
+                str = "5";
+            } 
+
+            return (byte)UInt32.Parse(str);
         }
 
         public static bool InVersion(ClientVersionBuild build1, ClientVersionBuild build2)
